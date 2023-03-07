@@ -76,11 +76,6 @@ class App(ct.CTk):
         self._page.pack()
 
 
-# Class that allows the user to login
-class LoginPage(ct.CTkFrame):
-    pass
-
-
 # Class that stores the first page
 class StartPage(ct.CTkFrame):
     def __init__(self, master):
@@ -125,6 +120,14 @@ class StartPage(ct.CTkFrame):
         self.title_text_top.grid(row=0, column=0, columnspan=3, pady=(50, 0))
         self.title_text_under.grid(row=1, column=0, columnspan=3, pady=(10, 0))
         self.start_button.grid(row=3, column=0, columnspan=3, pady=10)
+
+
+# Class that allows the user to login
+class LoginPage(ct.CTkFrame):
+    def __init__(self, master):
+        super().__init__(master)
+        # Setup the frame
+        self.configure(fg_color="transparent")
 
 
 # Class that stores the page where the user inputs their credits
