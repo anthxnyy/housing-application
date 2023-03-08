@@ -2,14 +2,14 @@
 Filename: MWU_Housing_Calculator.py
 Author: Anthony Toyco
 Date: Monday March 6, 2023
-Description: A program that calculates the housing score for the user
-at Mary Ward University
+Description: A program that calculates the user's housing score.
 """
+
+import typing as t
 
 import customtkinter as ct
 import questions as q
 from PIL import Image
-
 
 # CLASSES
 
@@ -17,11 +17,13 @@ from PIL import Image
 # Class that stores all the fonts used
 class Fonts:
     @staticmethod
-    def get_font(key):
+    def get_font(key: str) -> ct.CTkFont:
         FONTS = {
             "MAIN_TEXT_FONT": ct.CTkFont(family="Helvetica", size=15),
             "QUESTION_TEXT_FONT": ct.CTkFont(family="Helvetica", size=20),
-            "TITLE_TEXT_FONT_S25": ct.CTkFont(family="Helvetica", size=35),
+            "TITLE_TEXT_FONT_S25": ct.CTkFont(
+                family="Helvetica", size=25, weight="bold"
+            ),
             "TITLE_TEXT_FONT_S15": ct.CTkFont(family="Helvetica", size=20),
         }
         return FONTS[key]
@@ -37,89 +39,95 @@ class StudentData:
 
 # The main app class
 class App(ct.CTk):
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
         # Setup the frame
         ct.set_appearance_mode("dark")
         ct.set_default_color_theme("dark-blue")
         self.geometry(f"{800}x{600}")
-        self.title("Mary Ward University - Housing Calculator")
-
-        # Create the logo
-        self.logo = ct.CTkImage(
-            light_image=Image.open("housing_calc_new/assets/mw_logo.png"),
-            dark_image=Image.open("housing_calc_new/assets/mw_logo.png"),
-            size=(250, 250),
-        )
-        self.logo_label = ct.CTkLabel(self, text="", image=self.logo)
-        # Display the logo
-        self.logo_label.place(relx=0.5, rely=0.5, anchor="center")
+        self.resizable(False, False)
+        self.title("Mary Ward University")
 
         # Initialize the this page as the first page
-        self._page = None
-
-        # Go to the next page after 1 second of showing the startup logo
-        self.after(
-            1000,
-            lambda: [
-                self.replace_frame(StartPage),
-                self.logo_label.destroy(),
-            ],
-        )
+        self.current_page = None
+        # Go to the start page
+        self.replace_frame(StartPage),
 
     # Function that replaces the current frame with a new one
-    def replace_frame(self, page):
-        new_page = page(self)
-        if self._page is not None:
-            self._page.destroy()
-        self._page = new_page
-        self._page.pack()
+    def replace_frame(self, new_page: t.Type[ct.CTkFrame]) -> None:
+        if self.current_page is not None:
+            self.current_page.destroy()
+        self.current_page = new_page(self)
+        self.current_page.pack()
 
 
 # Class that stores the first page
 class StartPage(ct.CTkFrame):
-    def __init__(self, master):
+    def __init__(self, master) -> None:
         super().__init__(master)
         # Setup the frame
-        self.configure(fg_color="transparent")
-        self.grid_rowconfigure((0, 1, 2, 3), weight=1)
+        self.grid_rowconfigure((0, 1, 2), weight=1)
         self.grid_columnconfigure((0, 1, 2), weight=1)
 
         # Create the widgets
-        self.create_widgets(master)
+        self.create_widgets()
         # Display the widgets
         self.display_widgets()
 
     # Function that creates the widgets
-    def create_widgets(self, master):
-        self.logo_label = ct.CTkLabel(self, text="", image=master.logo)
-        self.title_text_top = ct.CTkLabel(
-            self,
-            text="HOUSING SCORE CALCULATOR",
-            font=Fonts.get_font("TITLE_TEXT_FONT_S25"),
+    def create_widgets(self: t.Type[ct.CTkFrame]) -> None:
+        # Create the frame that holds the widgets
+        self.content_frame = ct.CTkFrame(self)
+        # Create the background image
+        self.bg_image = ct.CTkImage(
+            light_image=Image.open("housing_calc_new/assets/login_bg.png"),
+            dark_image=Image.open("housing_calc_new/assets/login_bg.png"),
+            size=(1800, 700),
         )
-        self.title_text_under = ct.CTkLabel(
-            self,
-            text="By Mary Ward University",
-            text_color="gray75",
-            font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
+        self.bg_label = ct.CTkLabel(self, text="", image=self.bg_image)
+        # Create the logo image
+        self.logo_image = ct.CTkImage(
+            light_image=Image.open("housing_calc_new/assets/logo.png"),
+            dark_image=Image.open("housing_calc_new/assets/logo.png"),
+            size=(125, 125),
         )
+        self.logo_label = ct.CTkLabel(
+            self.content_frame,
+            height=125,
+            text="",
+            image=self.logo_image,
+        )
+        # Create the top text
+        self.top_text = ct.CTkLabel(
+            self,
+            text="Welcome to the MWU Housing Calculator",
+            font=ct.CTkFont(family="Helvetica", size=24, weight="bold"),
+        )
+        # Create the bottom text
+        self.bottom_text = ct.CTkLabel(
+            self,
+            text="Click the button below to start",
+            font=ct.CTkFont(family="Helvetica", size=16),
+        )
+        # Create start button
         self.start_button = ct.CTkButton(
             self,
-            width=150,
+            width=200,
             height=50,
             text="START",
             hover_color="#001B4B",
             font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
-            command=lambda: master.replace_frame(CreditInputPage),
+            command=lambda: self.master.replace_frame(LoginPage),
         )
 
     # Function that displays the widgets
-    def display_widgets(self):
-        self.logo_label.grid(row=2, column=0, columnspan=3, pady=57)
-        self.title_text_top.grid(row=0, column=0, columnspan=3, pady=(50, 0))
-        self.title_text_under.grid(row=1, column=0, columnspan=3, pady=(10, 0))
-        self.start_button.grid(row=3, column=0, columnspan=3, pady=10)
+    def display_widgets(self) -> None:
+        self.bg_label.grid(row=0, column=0, columnspan=3, rowspan=4)
+        self.content_frame.grid(row=0, column=1)
+        self.logo_label.pack()
+        # self.top_text.grid(row=1, column=1, pady=(0, 100))
+        # self.bottom_text.grid(row=1, column=1)
+        # self.start_button.grid(row=1, column=1, pady=(0, 25))
 
 
 # Class that allows the user to login
@@ -128,6 +136,59 @@ class LoginPage(ct.CTkFrame):
         super().__init__(master)
         # Setup the frame
         self.configure(fg_color="transparent")
+
+        # Create the widgets
+        self.create_widgets()
+        self.display_widgets()
+
+    # Function that creates the widgets
+    def create_widgets(self):
+        # Create the background image
+        self.bg_image = ct.CTkImage(
+            light_image=Image.open("housing_calc_new/assets/login_bg.png"),
+            dark_image=Image.open("housing_calc_new/assets/login_bg.png"),
+            size=(1700, 700),
+        )
+        self.bg_label = ct.CTkLabel(self, text="", image=self.bg_image)
+        # Create the title text
+        self.text = ct.CTkLabel(
+            self,
+            text="LOGIN",
+            font=Fonts.get_font("TITLE_TEXT_FONT_S25"),
+        )
+        # Create the username entry
+        self.username_entry = ct.CTkEntry(
+            self,
+            width=100,
+            font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
+            placeholder_text="Username",
+        )
+        # Create the password entry
+        self.password_entry = ct.CTkEntry(
+            self,
+            width=100,
+            font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
+            placeholder_text="Password",
+            show="*",
+        )
+        # Create the login button
+        self.login_button = ct.CTkButton(
+            self,
+            width=150,
+            height=50,
+            text="LOGIN",
+            hover_color="#001B4B",
+            font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
+            command=lambda: self.login(),
+        )
+
+    # Function that displays the widgets
+    def display_widgets(self):
+        self.bg_label.pack()
+        self.text.place(relx=0.5, rely=0.5, anchor="center", y=-100)
+        self.username_entry.place(relx=0.5, rely=0.5, anchor="center", y=-20)
+        self.password_entry.place(relx=0.5, rely=0.5, anchor="center", y=60)
+        self.login_button.place(relx=0.5, rely=0.5, anchor="center", y=140)
 
 
 # Class that stores the page where the user inputs their credits
@@ -145,7 +206,7 @@ class CreditInputPage(ct.CTkFrame):
         self.display_widgets()
 
     # Function that creates the widgets
-    def create_widgets(self):
+    def create_widgets(self) -> None:
         self.question_title = ct.CTkLabel(
             self,
             text="How many credits do you currently have?",
@@ -173,7 +234,7 @@ class CreditInputPage(ct.CTkFrame):
         )
 
     # Function that displays the widgets
-    def display_widgets(self):
+    def display_widgets(self) -> None:
         self.question_title.grid(row=0, column=0, columnspan=3, pady=(50, 0))
         self.input_box_title.grid(
             row=1, column=0, columnspan=3, sticky="S", pady=(50, 10)
@@ -182,11 +243,11 @@ class CreditInputPage(ct.CTkFrame):
         self.input_button.grid(row=3, column=0, columnspan=3, pady=10)
 
     # Function that stores the input as the number of credits for the user
-    def store_credits(self, user_entry):
+    def store_credits(self, user_entry: int) -> None:
         StudentData.credits = user_entry
 
     # Function that verifies the input in the input box
-    def verify_input(self, user_entry):
+    def verify_input(self, user_entry: int) -> None:
         try:
             if (1 <= float(user_entry) <= 40) and (
                 float(user_entry) % 0.5 == 0
@@ -216,7 +277,7 @@ class QuestionPage(ct.CTkFrame):
         self.next_question("q1p1")
 
     # Function that creates the widgets
-    def create_widgets(self):
+    def create_widgets(self) -> None:
         # Title widget
         self.title = ct.CTkLabel(
             self,
@@ -277,12 +338,12 @@ class QuestionPage(ct.CTkFrame):
             text="Back",
             hover_color="#001B4B",
             font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
-            command=lambda: [back_button_click()],
+            command=lambda: [back_button_event()],
         )
 
         # Function for when the back button is clicked
         @staticmethod
-        def back_button_click():
+        def back_button_event() -> None:
             # Removes the contents of the current question
             self.forget_widgets("all")
             if len(StudentData.points_history) >= 2:
@@ -301,7 +362,7 @@ class QuestionPage(ct.CTkFrame):
             StudentData.question_history.pop()
 
     # Function that goes to the next question
-    def next_question(self, question_name):
+    def next_question(self, question_name: str) -> None:
         # If the question is not the final question
         if question_name != "END":
             # Add the question to the history
@@ -316,7 +377,7 @@ class QuestionPage(ct.CTkFrame):
             self.master.replace_frame(ResultsPage)
 
     # Function that displays the questions
-    def display_questions(self, question_name):
+    def display_questions(self, question_name: str) -> None:
         if q.questions[question_name]["button_cnt"] == 2:
             # If the question requires 2 buttons
             self.b_left_half.grid(row=1, column=0, pady=10)
@@ -334,7 +395,7 @@ class QuestionPage(ct.CTkFrame):
             self.b_bot_right.grid(row=2, column=2, pady=10)
 
     # Function that displays the back button
-    def display_back_button(self, question_name):
+    def display_back_button(self, question_name: str) -> None:
         # If the question is the first question or the final question
         # Do not display the back button
         if (question_name == "q1p1") or (question_name == "END"):
@@ -345,7 +406,7 @@ class QuestionPage(ct.CTkFrame):
             self.back_button.grid(row=3, column=0, pady=10)
 
     # Function that changes the text and commands of the buttons
-    def config_questions(self, question_name):
+    def config_questions(self, question_name: str) -> None:
         # Change the title of the question
         self.title.configure(text=q.questions[question_name]["prompt"])
         self.title.grid(row=0, column=0, columnspan=3, pady=(50, 0))
@@ -466,7 +527,7 @@ class QuestionPage(ct.CTkFrame):
             )
 
     # Function that forgets the widgets
-    def forget_widgets(self, widget_cnt):
+    def forget_widgets(self, widget_cnt: t.Union[int, str]) -> None:
         # Initialize the list of widgets to forget
         widgets = [self.title]
         # Half button setup
@@ -503,7 +564,7 @@ class QuestionPage(ct.CTkFrame):
             widget.grid_forget()
 
     # Function that changes the points of the user based on the button pressed
-    def change_points(self, value):
+    def change_points(self, value: int) -> None:
         StudentData.points_history.append(value)
         StudentData.points += value
 
@@ -520,7 +581,7 @@ class ResultsPage(ct.CTkFrame):
         # Display the widgets
         self.display_widgets()
 
-    def create_widgets(self):
+    def create_widgets(self) -> None:
         # Creates the logo
         self.logo = ct.CTkImage(
             light_image=Image.open("housing_calc_new/assets/mw_logo.png"),
@@ -555,7 +616,7 @@ class ResultsPage(ct.CTkFrame):
         )
 
     # Function that displays the widgets
-    def display_widgets(self):
+    def display_widgets(self) -> None:
         self.logo_label.grid(row=0, column=1, columnspan=4, pady=(50, 50))
         self.main_text.grid(row=1, column=0, columnspan=6)
         self.points_text.grid(row=2, column=0, columnspan=6, pady=(50, 0))
