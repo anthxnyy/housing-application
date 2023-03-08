@@ -77,12 +77,12 @@ class StartPage(ct.CTkFrame):
     # Function that creates the widgets
     def create_widgets(self: t.Type[ct.CTkFrame]) -> None:
         # Create the background image
-        self.bg_image = ct.CTkImage(
-            light_image=Image.open("housing_calc_new/assets/login_bg.png"),
-            dark_image=Image.open("housing_calc_new/assets/login_bg.png"),
+        self.start_bg_file = ct.CTkImage(
+            light_image=Image.open("housing_calc_new/assets/background.png"),
+            dark_image=Image.open("housing_calc_new/assets/background.png"),
             size=(1800, 700),
         )
-        self.bg_label = ct.CTkLabel(self, text="", image=self.bg_image)
+        self.start_bg = ct.CTkLabel(self, text="", image=self.start_bg_file)
         # Create the frame that holds the widgets
         self.content_frame = ct.CTkFrame(self)
         self.content_frame.grid_rowconfigure((0, 1, 2), weight=1)
@@ -101,23 +101,36 @@ class StartPage(ct.CTkFrame):
         # Create the title text
         self.title_text = ct.CTkLabel(
             self.content_frame,
-            text="Mary Ward University Housing Calculator",
+            text="Mary Ward University\nHousing Calculator",
             font=Fonts.get_font("TITLE_TEXT_FONT_S25"),
         )
         # Create the body text
         self.body_text = ct.CTkLabel(
             self.content_frame,
-            text="This program will help you calculate your housing score.\nPlease click the button below to begin.",
+            text=(
+                "\nWelcome to the MWU Housing Calculator"
+                "\nTo begin, login in and answer the following questions.\n"
+            ),
             font=Fonts.get_font("MAIN_TEXT_FONT"),
+        )
+        # Create the start button
+        self.start_button = ct.CTkButton(
+            self.content_frame,
+            height=30,
+            width=150,
+            text="START",
+            font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
+            command=lambda: self.master.replace_frame(LoginPage),
         )
 
     # Function that displays the widgets
     def display_widgets(self) -> None:
-        self.bg_label.grid(row=0, column=0, columnspan=3, rowspan=3)
-        self.content_frame.grid(row=0, column=1, rowspan=3)
-        self.logo_label.grid(row=0, column=0, pady=(100, 150))
-        self.title_text.grid(row=1, column=0)
-        self.body_text.grid(row=2, column=0)
+        self.start_bg.grid(row=0, column=0, columnspan=3, rowspan=3)
+        self.content_frame.grid(row=0, column=1, rowspan=3, sticky="ns")
+        self.logo_label.grid(row=0, column=0)
+        self.title_text.grid(row=1, column=0, sticky="n")
+        self.body_text.grid(row=2, column=0, ipadx=50, sticky="n")
+        self.start_button.grid(row=3, column=0, pady=(0, 50))
 
 
 # Class that allows the user to login
@@ -133,52 +146,11 @@ class LoginPage(ct.CTkFrame):
 
     # Function that creates the widgets
     def create_widgets(self):
-        # Create the background image
-        self.bg_image = ct.CTkImage(
-            light_image=Image.open("housing_calc_new/assets/login_bg.png"),
-            dark_image=Image.open("housing_calc_new/assets/login_bg.png"),
-            size=(1700, 700),
-        )
-        self.bg_label = ct.CTkLabel(self, text="", image=self.bg_image)
-        # Create the title text
-        self.text = ct.CTkLabel(
-            self,
-            text="LOGIN",
-            font=Fonts.get_font("TITLE_TEXT_FONT_S25"),
-        )
-        # Create the username entry
-        self.username_entry = ct.CTkEntry(
-            self,
-            width=100,
-            font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
-            placeholder_text="Username",
-        )
-        # Create the password entry
-        self.password_entry = ct.CTkEntry(
-            self,
-            width=100,
-            font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
-            placeholder_text="Password",
-            show="*",
-        )
-        # Create the login button
-        self.login_button = ct.CTkButton(
-            self,
-            width=150,
-            height=50,
-            text="LOGIN",
-            hover_color="#001B4B",
-            font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
-            command=lambda: self.login(),
-        )
+        pass
 
     # Function that displays the widgets
     def display_widgets(self):
-        self.bg_label.pack()
-        self.text.place(relx=0.5, rely=0.5, anchor="center", y=-100)
-        self.username_entry.place(relx=0.5, rely=0.5, anchor="center", y=-20)
-        self.password_entry.place(relx=0.5, rely=0.5, anchor="center", y=60)
-        self.login_button.place(relx=0.5, rely=0.5, anchor="center", y=140)
+        pass
 
 
 # Class that stores the page where the user inputs their credits
