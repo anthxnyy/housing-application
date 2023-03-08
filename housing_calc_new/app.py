@@ -76,8 +76,6 @@ class StartPage(ct.CTkFrame):
 
     # Function that creates the widgets
     def create_widgets(self: t.Type[ct.CTkFrame]) -> None:
-        # Create the frame that holds the widgets
-        self.content_frame = ct.CTkFrame(self)
         # Create the background image
         self.bg_image = ct.CTkImage(
             light_image=Image.open("housing_calc_new/assets/login_bg.png"),
@@ -85,6 +83,9 @@ class StartPage(ct.CTkFrame):
             size=(1800, 700),
         )
         self.bg_label = ct.CTkLabel(self, text="", image=self.bg_image)
+        # Create the frame that holds the widgets
+        self.content_frame = ct.CTkFrame(self)
+        self.content_frame.grid_rowconfigure((0, 1, 2), weight=1)
         # Create the logo image
         self.logo_image = ct.CTkImage(
             light_image=Image.open("housing_calc_new/assets/logo.png"),
@@ -97,37 +98,26 @@ class StartPage(ct.CTkFrame):
             text="",
             image=self.logo_image,
         )
-        # Create the top text
-        self.top_text = ct.CTkLabel(
-            self,
-            text="Welcome to the MWU Housing Calculator",
-            font=ct.CTkFont(family="Helvetica", size=24, weight="bold"),
+        # Create the title text
+        self.title_text = ct.CTkLabel(
+            self.content_frame,
+            text="Mary Ward University Housing Calculator",
+            font=Fonts.get_font("TITLE_TEXT_FONT_S25"),
         )
-        # Create the bottom text
-        self.bottom_text = ct.CTkLabel(
-            self,
-            text="Click the button below to start",
-            font=ct.CTkFont(family="Helvetica", size=16),
-        )
-        # Create start button
-        self.start_button = ct.CTkButton(
-            self,
-            width=200,
-            height=50,
-            text="START",
-            hover_color="#001B4B",
-            font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
-            command=lambda: self.master.replace_frame(LoginPage),
+        # Create the body text
+        self.body_text = ct.CTkLabel(
+            self.content_frame,
+            text="This program will help you calculate your housing score.\nPlease click the button below to begin.",
+            font=Fonts.get_font("MAIN_TEXT_FONT"),
         )
 
     # Function that displays the widgets
     def display_widgets(self) -> None:
-        self.bg_label.grid(row=0, column=0, columnspan=3, rowspan=4)
-        self.content_frame.grid(row=0, column=1)
-        self.logo_label.pack()
-        # self.top_text.grid(row=1, column=1, pady=(0, 100))
-        # self.bottom_text.grid(row=1, column=1)
-        # self.start_button.grid(row=1, column=1, pady=(0, 25))
+        self.bg_label.grid(row=0, column=0, columnspan=3, rowspan=3)
+        self.content_frame.grid(row=0, column=1, rowspan=3)
+        self.logo_label.grid(row=0, column=0, pady=(100, 150))
+        self.title_text.grid(row=1, column=0)
+        self.body_text.grid(row=2, column=0)
 
 
 # Class that allows the user to login
