@@ -21,19 +21,19 @@ class Fonts:
         FONTS = {
             "MAIN_TEXT_FONT": ct.CTkFont(family="Helvetica", size=15),
             "QUESTION_TEXT_FONT": ct.CTkFont(family="Helvetica", size=20),
-            "TITLE_TEXT_FONT_S25": ct.CTkFont(
+            "TEXT_FONT_S25": ct.CTkFont(
                 family="Helvetica", size=25, weight="bold"
             ),
-            "TITLE_TEXT_FONT_S15": ct.CTkFont(family="Helvetica", size=20),
+            "TEXT_FONT_S15": ct.CTkFont(family="Helvetica", size=20),
         }
         return FONTS[key]
 
 
 # Class that stores all the data for the student
 class StudentData:
-    credits = 0
-    points = 0
-    question_history = []
+    credits: int = 0
+    points: int = 0
+    question_history: list[int] = []
     points_history = []
 
 
@@ -44,14 +44,14 @@ class App(ct.CTk):
         # Setup the frame
         ct.set_appearance_mode("dark")
         ct.set_default_color_theme("dark-blue")
-        self.geometry(f"{800}x{600}")
+        self.geometry(f"{900}x{600}")
         self.resizable(False, False)
         self.title("Mary Ward University")
 
         # Initialize the this page as the first page
         self.current_page = None
         # Go to the start page
-        self.replace_frame(StartPage),
+        self.replace_frame(QuestionPage),
 
     # Function that replaces the current frame with a new one
     def replace_frame(self, new_page: t.Type[ct.CTkFrame]) -> None:
@@ -75,7 +75,7 @@ class StartPage(ct.CTkFrame):
         self.display_widgets()
 
     # Function that creates the widgets
-    def create_widgets(self: t.Type[ct.CTkFrame]) -> None:
+    def create_widgets(self) -> None:
         # Create the background image
         self.start_bg_file = ct.CTkImage(
             light_image=Image.open("housing_calc_new/assets/background.png"),
@@ -102,14 +102,14 @@ class StartPage(ct.CTkFrame):
         self.title_text = ct.CTkLabel(
             self.content_frame,
             text="Mary Ward University\nHousing Calculator",
-            font=Fonts.get_font("TITLE_TEXT_FONT_S25"),
+            font=Fonts.get_font("TEXT_FONT_S25"),
         )
         # Create the body text
         self.body_text = ct.CTkLabel(
             self.content_frame,
             text=(
                 "\nWelcome to the MWU Housing Calculator"
-                "\nTo begin, login in and answer the following questions.\n"
+                "\nPress the start button to login\n"
             ),
             font=Fonts.get_font("MAIN_TEXT_FONT"),
         )
@@ -119,17 +119,17 @@ class StartPage(ct.CTkFrame):
             height=30,
             width=150,
             text="START",
-            font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
+            font=Fonts.get_font("TEXT_FONT_S15"),
             command=lambda: self.master.replace_frame(LoginPage),
         )
 
     # Function that displays the widgets
     def display_widgets(self) -> None:
         self.start_bg.grid(row=0, column=0, columnspan=3, rowspan=3)
-        self.content_frame.grid(row=0, column=1, rowspan=3, sticky="ns")
+        self.content_frame.grid(row=0, column=1, rowspan=3, sticky="NS")
         self.logo_label.grid(row=0, column=0)
-        self.title_text.grid(row=1, column=0, sticky="n")
-        self.body_text.grid(row=2, column=0, ipadx=50, sticky="n")
+        self.title_text.grid(row=1, column=0, sticky="N")
+        self.body_text.grid(row=2, column=0, ipadx=50, sticky="N")
         self.start_button.grid(row=3, column=0, pady=(0, 50))
 
 
@@ -138,19 +138,73 @@ class LoginPage(ct.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
         # Setup the frame
-        self.configure(fg_color="transparent")
+        self.grid_rowconfigure((0, 1, 2), weight=1)
+        self.grid_columnconfigure((0, 1, 2), weight=1)
 
         # Create the widgets
         self.create_widgets()
+        # Display the widgets
         self.display_widgets()
 
     # Function that creates the widgets
     def create_widgets(self):
-        pass
+        # Create the background image
+        self.start_bg_file = ct.CTkImage(
+            light_image=Image.open("housing_calc_new/assets/background.png"),
+            dark_image=Image.open("housing_calc_new/assets/background.png"),
+            size=(1800, 700),
+        )
+        self.start_bg = ct.CTkLabel(self, text="", image=self.start_bg_file)
+        # Create the frame that holds the widgets
+        self.content_frame = ct.CTkFrame(self)
+        self.content_frame.grid_rowconfigure((0, 1, 2), weight=1)
+        # Create the title text
+        self.title_text = ct.CTkLabel(
+            self.content_frame,
+            text="Login",
+            font=Fonts.get_font("TEXT_FONT_S25"),
+        )
+        self.username_entry = ct.CTkEntry(
+            self.content_frame, width=200, placeholder_text="Username"
+        )
+        self.password_entry = ct.CTkEntry(
+            self.content_frame, width=200, show="*", placeholder_text="Password"
+        )
+        self.login_button = ct.CTkButton(
+            self.content_frame,
+            text="LOGIN",
+            command=lambda: self.verify_input(
+                self.username_entry.get(), self.password_entry.get()
+            ),
+            width=200,
+        )
+        self.username_error = ct.CTkLabel(
+            self.content_frame,
+            text="ERROR: Enter valid credentials!",
+            text_color="#FF0000",
+            font=Fonts.get_font("MAIN_TEXT_FONT"),
+        )
 
     # Function that displays the widgets
     def display_widgets(self):
-        pass
+        self.start_bg.grid(row=0, column=0, columnspan=3, rowspan=3)
+        self.content_frame.grid(row=0, column=1, rowspan=3, sticky="NS")
+        self.title_text.grid(row=0, column=0, sticky="NSEW", pady=(50, 0))
+        self.username_entry.grid(row=1, column=0, padx=30)
+        self.password_entry.grid(row=2, column=0, padx=30, sticky="N")
+        self.login_button.grid(row=3, column=0, pady=(0, 50))
+
+    def verify_input(self, username: str, password: str) -> None:
+        try:
+            if username and password:
+                # If valid, delete the error box
+                self.username_error.grid_forget()
+                # Go to the question pages
+                self.master.replace_frame(CreditInputPage)
+            else:
+                raise ValueError
+        except ValueError:
+            self.username_error.grid(row=2, column=0, columnspan=3)
 
 
 # Class that stores the page where the user inputs their credits
@@ -158,8 +212,7 @@ class CreditInputPage(ct.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
         # Setup the frame
-        self.configure(fg_color="transparent")
-        self.grid_rowconfigure((0, 1, 2, 3), weight=1)
+        self.grid_rowconfigure((0, 1, 2), weight=1)
         self.grid_columnconfigure((0, 1, 2), weight=1)
 
         # Create the widgets
@@ -169,26 +222,44 @@ class CreditInputPage(ct.CTkFrame):
 
     # Function that creates the widgets
     def create_widgets(self) -> None:
-        self.question_title = ct.CTkLabel(
-            self,
-            text="How many credits do you currently have?",
-            font=Fonts.get_font("QUESTION_TEXT_FONT"),
+        # Create the background image
+        self.bg_file = ct.CTkImage(
+            light_image=Image.open("housing_calc_new/assets/gradient.png"),
+            dark_image=Image.open("housing_calc_new/assets/gradient.png"),
+            size=(1800, 700),
         )
-        self.input_box_title = ct.CTkLabel(self, text="Enter an integer below")
+        self.bg = ct.CTkLabel(self, text="", image=self.bg_file)
+        # Create the frame that holds the widgets
+        self.content_frame = ct.CTkFrame(self)
+        self.content_frame.grid_rowconfigure((0, 1, 2), weight=1)
+        self.content_frame.grid_columnconfigure((0, 1, 2), weight=1)
+        self.question_title = ct.CTkLabel(
+            self.content_frame,
+            text="How many credits do you currently have?",
+            font=Fonts.get_font("TEXT_FONT_S25"),
+        )
+        self.input_box_title = ct.CTkLabel(
+            self.content_frame,
+            text="Enter an integer below\n",
+            font=Fonts.get_font("MAIN_TEXT_FONT"),
+        )
         self.input_box = ct.CTkEntry(
-            self, font=Fonts.get_font("MAIN_TEXT_FONT")
+            self.content_frame,
+            font=Fonts.get_font("MAIN_TEXT_FONT"),
+            width=200,
+            placeholder_text="Number",
         )
         self.input_box_error = ct.CTkLabel(
-            self,
+            self.content_frame,
             text="ERROR: Please enter a valid number!",
             text_color="#FF0000",
             font=Fonts.get_font("MAIN_TEXT_FONT"),
         )
-        self.input_button = ct.CTkButton(
-            self,
+        self.submit = ct.CTkButton(
+            self.content_frame,
             text="SUBMIT",
             hover_color="#001B4B",
-            font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
+            font=Fonts.get_font("TEXT_FONT_S15"),
             command=lambda: [
                 self.input_box_error.forget(),
                 self.verify_input(self.input_box.get()),
@@ -197,12 +268,16 @@ class CreditInputPage(ct.CTkFrame):
 
     # Function that displays the widgets
     def display_widgets(self) -> None:
-        self.question_title.grid(row=0, column=0, columnspan=3, pady=(50, 0))
-        self.input_box_title.grid(
-            row=1, column=0, columnspan=3, sticky="S", pady=(50, 10)
+        self.bg.grid(row=0, column=0, columnspan=3, rowspan=3)
+        self.content_frame.grid(row=0, column=1, rowspan=3, sticky="NS")
+        self.question_title.grid(
+            row=0, column=0, columnspan=3, pady=(50, 0), padx=50, sticky="S"
         )
-        self.input_box.grid(row=2, column=0, columnspan=3, pady=(0, 10))
-        self.input_button.grid(row=3, column=0, columnspan=3, pady=10)
+        self.input_box_title.grid(
+            row=1, column=0, columnspan=3, sticky="N", pady=(50, 10)
+        )
+        self.input_box.grid(row=1, column=0, columnspan=3, pady=(0, 10))
+        self.submit.grid(row=2, column=0, columnspan=3, pady=10, sticky="N")
 
     # Function that stores the input as the number of credits for the user
     def store_credits(self, user_entry: int) -> None:
@@ -223,7 +298,9 @@ class CreditInputPage(ct.CTkFrame):
             else:
                 raise ValueError
         except ValueError:
-            self.input_box_error.grid(row=4, column=0, columnspan=3)
+            self.input_box_error.grid(
+                row=1, column=0, columnspan=3, sticky="S", pady=(0, 30)
+            )
 
 
 # Class that stores the questions
@@ -231,75 +308,107 @@ class QuestionPage(ct.CTkFrame):
     def __init__(self, master):
         super().__init__(master)
         # Setup the frame
-        self.configure(fg_color="transparent")
+        self.grid_rowconfigure((0, 1, 2), weight=1)
+        self.grid_columnconfigure((0, 1, 2), weight=1)
 
         # Create the widgets
         self.create_widgets()
+        # Display the widgets
+        self.display_widgets()
         # Change to the first question
         self.next_question("q1p1")
 
     # Function that creates the widgets
     def create_widgets(self) -> None:
+        # Create the background image
+        self.bg_file = ct.CTkImage(
+            light_image=Image.open("housing_calc_new/assets/gradient.png"),
+            dark_image=Image.open("housing_calc_new/assets/gradient.png"),
+            size=(1800, 700),
+        )
+        self.bg = ct.CTkLabel(self, text="", image=self.bg_file)
+        # Create the frame that holds the widgets
+        self.content_frame = ct.CTkFrame(self, fg_color="#212121")
+        self.content_frame.grid_rowconfigure((0, 1, 2), weight=1)
+        self.content_frame.grid_columnconfigure((0, 1, 2), weight=1)
         # Title widget
         self.title = ct.CTkLabel(
-            self,
+            self.content_frame,
             text="text for title",
-            font=Fonts.get_font("QUESTION_TEXT_FONT"),
+            font=Fonts.get_font("TEXT_FONT_S25"),
         )
         # Half buttons widgets
         self.b_left_half = ct.CTkButton(
-            self,
+            self.content_frame,
             hover_color="#001B4B",
-            font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
+            font=Fonts.get_font("TEXT_FONT_S15"),
+            width=250,
+            height=100,
         )
         self.b_right_half = ct.CTkButton(
-            self,
+            self.content_frame,
             hover_color="#001B4B",
-            font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
+            font=Fonts.get_font("TEXT_FONT_S15"),
+            width=250,
+            height=100,
         )
         # Third buttons widgets
         self.b_left_third = ct.CTkButton(
-            self,
+            self.content_frame,
             hover_color="#001B4B",
-            font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
+            font=Fonts.get_font("TEXT_FONT_S15"),
+            width=250,
+            height=100,
         )
         self.b_middle_third = ct.CTkButton(
-            self,
+            self.content_frame,
             hover_color="#001B4B",
-            font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
+            font=Fonts.get_font("TEXT_FONT_S15"),
+            width=250,
+            height=100,
         )
         self.b_right_third = ct.CTkButton(
-            self,
+            self.content_frame,
             hover_color="#001B4B",
-            font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
+            font=Fonts.get_font("TEXT_FONT_S15"),
+            width=250,
+            height=100,
         )
         # Quarter buttons widgets
         self.b_top_left = ct.CTkButton(
-            self,
+            self.content_frame,
             hover_color="#001B4B",
-            font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
+            font=Fonts.get_font("TEXT_FONT_S15"),
+            width=250,
+            height=100,
         )
         self.b_top_right = ct.CTkButton(
-            self,
+            self.content_frame,
             hover_color="#001B4B",
-            font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
+            font=Fonts.get_font("TEXT_FONT_S15"),
+            width=250,
+            height=100,
         )
         self.b_bot_left = ct.CTkButton(
-            self,
+            self.content_frame,
             hover_color="#001B4B",
-            font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
+            font=Fonts.get_font("TEXT_FONT_S15"),
+            width=250,
+            height=100,
         )
         self.b_bot_right = ct.CTkButton(
-            self,
+            self.content_frame,
             hover_color="#001B4B",
-            font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
+            font=Fonts.get_font("TEXT_FONT_S15"),
+            width=250,
+            height=100,
         )
         # Back button widget
         self.back_button = ct.CTkButton(
-            self,
+            self.content_frame,
             text="Back",
             hover_color="#001B4B",
-            font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
+            font=Fonts.get_font("TEXT_FONT_S15"),
             command=lambda: [back_button_event()],
         )
 
@@ -323,6 +432,12 @@ class QuestionPage(ct.CTkFrame):
             # Remove the question from the history
             StudentData.question_history.pop()
 
+    def display_widgets(self) -> None:
+        self.bg.grid(row=0, column=0, columnspan=3, rowspan=3)
+        self.content_frame.grid(
+            row=0, column=0, columnspan=3, rowspan=3, sticky="EW", ipady=100
+        )
+
     # Function that goes to the next question
     def next_question(self, question_name: str) -> None:
         # If the question is not the final question
@@ -342,19 +457,19 @@ class QuestionPage(ct.CTkFrame):
     def display_questions(self, question_name: str) -> None:
         if q.questions[question_name]["button_cnt"] == 2:
             # If the question requires 2 buttons
-            self.b_left_half.grid(row=1, column=0, pady=10)
-            self.b_right_half.grid(row=1, column=2, pady=10)
+            self.b_left_half.grid(row=1, column=0)
+            self.b_right_half.grid(row=1, column=2)
         elif q.questions[question_name]["button_cnt"] == 3:
             # If the question requires 3 buttons
-            self.b_left_third.grid(row=1, column=0, pady=10)
-            self.b_middle_third.grid(row=1, column=1, pady=10)
-            self.b_right_third.grid(row=1, column=2, pady=10)
+            self.b_left_third.grid(row=1, column=0)
+            self.b_middle_third.grid(row=1, column=1)
+            self.b_right_third.grid(row=1, column=2)
         elif q.questions[question_name]["button_cnt"] == 4:
             # If the question requires 4 buttons
-            self.b_top_left.grid(row=1, column=0, pady=10)
-            self.b_top_right.grid(row=1, column=2, pady=10)
-            self.b_bot_left.grid(row=2, column=0, pady=10)
-            self.b_bot_right.grid(row=2, column=2, pady=10)
+            self.b_top_left.grid(row=1, column=0)
+            self.b_top_right.grid(row=1, column=2)
+            self.b_bot_left.grid(row=2, column=0)
+            self.b_bot_right.grid(row=2, column=2)
 
     # Function that displays the back button
     def display_back_button(self, question_name: str) -> None:
@@ -365,13 +480,13 @@ class QuestionPage(ct.CTkFrame):
         else:
             # If the question is not the first question or the final question
             # Display the back button
-            self.back_button.grid(row=3, column=0, pady=10)
+            self.back_button.grid(row=2, column=1, sticky="S", pady=(0, 30))
 
     # Function that changes the text and commands of the buttons
     def config_questions(self, question_name: str) -> None:
         # Change the title of the question
         self.title.configure(text=q.questions[question_name]["prompt"])
-        self.title.grid(row=0, column=0, columnspan=3, pady=(50, 0))
+        self.title.grid(row=0, column=0, columnspan=3, pady=(30, 0))
         # Change the text and points awarded for each button
         # Half button setup
         if q.questions[question_name]["button_cnt"] == 2:
@@ -489,7 +604,7 @@ class QuestionPage(ct.CTkFrame):
             )
 
     # Function that forgets the widgets
-    def forget_widgets(self, widget_cnt: t.Union[int, str]) -> None:
+    def forget_widgets(self, widget_cnt: int) -> None:
         # Initialize the list of widgets to forget
         widgets = [self.title]
         # Half button setup
@@ -546,8 +661,8 @@ class ResultsPage(ct.CTkFrame):
     def create_widgets(self) -> None:
         # Creates the logo
         self.logo = ct.CTkImage(
-            light_image=Image.open("housing_calc_new/assets/mw_logo.png"),
-            dark_image=Image.open("housing_calc_new/assets/mw_logo.png"),
+            light_image=Image.open("housing_calc_new/assets/logo.png"),
+            dark_image=Image.open("housing_calc_new/assets/logo.png"),
             size=(150, 150),
         )
         self.logo_label = ct.CTkLabel(self, text="", image=self.logo)
@@ -559,13 +674,13 @@ class ResultsPage(ct.CTkFrame):
                 "\nPlease check your email for a confirmation of your"
                 "\nThank you for using the MWU Housing Calculator."
             ),
-            font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
+            font=Fonts.get_font("TEXT_FONT_S15"),
         )
         # Creates the points text
         self.points_text = ct.CTkLabel(
             self,
             text=f"Your points: {round(StudentData.points, 1)}",
-            font=Fonts.get_font("TITLE_TEXT_FONT_S15"),
+            font=Fonts.get_font("TEXT_FONT_S15"),
         )
         # Creates the restart button
         self.restart_button = ct.CTkButton(

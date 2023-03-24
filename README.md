@@ -8,6 +8,7 @@ A rushed and hard-coded ICS3U1 group culminating project. Currently improving th
 
 TODO:
 
-- Improve app appearance
-- Create the results page
+- Create login page
+- Improve app appearance, background images
+- Create the results page, let user see their results and individual answers for each question
 - Repeat program function at results page
