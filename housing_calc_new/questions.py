@@ -21,7 +21,7 @@ questions = {
         "button_cnt": 2,
     },
     "q1p4": {
-        "prompt": "Please specify the reason on why you have been denied residency:\n",
+        "prompt": "Please specify the reason on\nwhy you have been denied residency:\n",
         "button_text": ["Did not qualify", "Academic Probation", "Other"],
         "button_values": [1, -1, -1],
         "next_question": ["q2p1", "q2p1", "q2p1"],
@@ -52,7 +52,7 @@ questions = {
         "prompt": "What is your academic/disciplinary probation status?\n",
         "button_text": [
             "I am in/have been",
-            "I will possibly face probation",
+            "Possible probabtion soon",
             "I have faced probation",
             "No history of probation",
         ],
@@ -96,7 +96,7 @@ questions = {
         "button_cnt": 2,
     },
     "q7p3": {
-        "prompt": "Are any special accommodations needed for your physical disability?\n",
+        "prompt": "Are any special accommodations\nneeded for your physical disability?\n",
         "button_text": ["Yes", "No"],
         "button_values": [1, 0],
         "next_question": ["q8p1", "q8p1"],
@@ -117,7 +117,7 @@ questions = {
         "button_cnt": 2,
     },
     "q8p3": {
-        "prompt": "Are any special accommodations needed for your mental disability?\n",
+        "prompt": "Are any special accommodations\nneeded for your mental disability?\n",
         "button_text": ["Yes", "No"],
         "button_values": [1, 0],
         "next_question": ["q9p1", "q9p1"],
@@ -152,7 +152,7 @@ questions = {
         "button_cnt": 2,
     },
     "q11p2": {
-        "prompt": "Would you be interested in pursuing a job opportunity on campus?\n",
+        "prompt": "Would you be interested in\npursuing a job opportunity on campus?\n",
         "button_text": ["Yes", "No"],
         "button_values": [1, 0],
         "next_question": ["q12p1", "q12p1"],
