@@ -52,7 +52,7 @@ questions = {
         "prompt": "What is your academic/disciplinary probation status?\n",
         "button_text": [
             "I am in/have been",
-            "Possible probabtion soon",
+            "Possible probation soon",
             "I have faced probation",
             "No history of probation",
         ],

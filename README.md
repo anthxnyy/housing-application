@@ -5,10 +5,3 @@
 ![GitHub commit activity](https://img.shields.io/github/commit-activity/w/anthxnyy/housing-application)
 
 A rushed and hard-coded ICS3U1 group culminating project. Currently improving the program and making it look better while using object-oriented programming concepts.
-
-TODO:
-
-- Create login page
-- Improve app appearance, background images
-- Create the results page, let user see their results and individual answers for each question
-- Repeat program function at results page
